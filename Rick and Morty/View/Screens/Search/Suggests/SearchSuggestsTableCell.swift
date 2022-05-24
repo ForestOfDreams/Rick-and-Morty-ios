@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 final class SearchSuggestsTableCell: UITableViewCell {
+    // ???
+    var showCharacterDetailRequested: (String) -> () = {_ in }
     
     struct Model {
         let title: String
@@ -29,8 +31,9 @@ final class SearchSuggestsTableCell: UITableViewCell {
     }
     
     private func setupLayout() {
+        self.backgroundColor = .BG
         self.selectionStyle = .none
-        // Может быть помещать в contentView?
+
         contentView.addSubview(titleLabel)
         contentView.addSubview(collectionView)
         
@@ -69,6 +72,7 @@ final class SearchSuggestsTableCell: UITableViewCell {
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 20
         let ret = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        ret.backgroundColor = .BG
         ret.showsHorizontalScrollIndicator = false
         
         ret.register(
@@ -102,6 +106,9 @@ extension SearchSuggestsTableCell: UICollectionViewDataSource {
 
         cell.update(with: collectionCellContent[indexPath.item])
         return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        showCharacterDetailRequested("")
     }
 }
 

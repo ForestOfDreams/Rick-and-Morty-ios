@@ -9,79 +9,17 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
-    var window: UIWindow?
+    var applicationCoordinator: ApplicationCoordinator?
     
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        
-        let characterModel = CharacterViewController.Model(
-            statusModel: .init(key: "Some", value: "Value"),
-            name: "Rick",
-            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/2.jpeg")!
-        )
-        
-        let searchModel = SearchSuggestsViewController.Model(
-            cells: [
-                SearchSuggestsTableCell.Model(
-                    title: "Recents",
-                    collectionCellContent: [
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/2.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/3.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/4.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/30.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/20.jpeg")!
-                        )
-                    ]
-                ),
-                SearchSuggestsTableCell.Model(
-                    title: "Recents",
-                    collectionCellContent: [
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/2.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/3.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/4.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/30.jpeg")!
-                        ),
-                        SearchSuggestsCollectionCell.Model(
-                            imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/20.jpeg")!
-                        )
-                    ]
-                )
-            ]
-        )
-//        let navigationController = UINavigationController(
-//            rootViewController: CharacterViewController(
-//                model: characterModel
-//            )
-//        )
-//                let navigationController = UINavigationController(
-//                    rootViewController: SearchViewController(
-//                        model: searchModel
-//                    )
-//                )
-        let controller = TabBarController()
-        
-        window.rootViewController = controller
+        let applicationCoordinator = ApplicationCoordinator(window: window)
+        applicationCoordinator.start()
+        self.applicationCoordinator = applicationCoordinator
         window.makeKeyAndVisible()
-        self.window = window
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -10,12 +10,16 @@ import UIKit
 
 final class SearchResultsViewController: UIViewController {
     
+    // ???
+    var showCharacterDetailRequested: (String) -> ()
+    
     struct Model {
         let cells: [SearchResultTableCell.Model]
     }
     
-    init(model: Model) {
+    init(model: Model, showCharacterDetailRequested: @escaping (String) -> ()) {
         self.model = model
+        self.showCharacterDetailRequested = showCharacterDetailRequested
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,7 +35,7 @@ final class SearchResultsViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .red
+        view.backgroundColor = .BG
         
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,5 +87,9 @@ extension SearchResultsViewController: UITableViewDataSource {
             )
         )
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        showCharacterDetailRequested(model.cells[indexPath.item].name)
     }
 }

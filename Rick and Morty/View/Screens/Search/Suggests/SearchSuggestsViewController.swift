@@ -10,12 +10,15 @@ import UIKit
 
 final class SearchSuggestsViewController: UIViewController {
     
+    var showCharacterDetailRequested: (String) -> ()
+    
     struct Model {
         let cells: [SearchSuggestsTableCell.Model]
     }
     
-    init(model: Model) {
+    init(model: Model, showCharacterDetailRequested: @escaping (String) -> ()) {
         self.model = model
+        self.showCharacterDetailRequested = showCharacterDetailRequested
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -46,6 +49,7 @@ final class SearchSuggestsViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let ret = UITableView()
+        ret.backgroundColor = .BG
         ret.separatorStyle = .none
         ret.register(SearchSuggestsTableCell.self, forCellReuseIdentifier: SearchSuggestsTableCell.defaultReusableIdentifier)
         return ret
@@ -58,7 +62,6 @@ extension SearchSuggestsViewController: UITableViewDelegate {
 extension SearchSuggestsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
-//        return 250
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -73,7 +76,7 @@ extension SearchSuggestsViewController: UITableViewDataSource {
             assertionFailure()
             return UITableViewCell()
         }
-        
+        cell.showCharacterDetailRequested = showCharacterDetailRequested
         cell.update(
             with: SearchSuggestsTableCell.Model(
                 title: model.cells[indexPath.item].title,

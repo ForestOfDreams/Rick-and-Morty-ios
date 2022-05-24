@@ -87,7 +87,7 @@ final class SearchResultTableCell: UITableViewCell {
     private lazy var typeLabel: UILabel = {
         let ret = UILabel()
         ret.font = .boldSystemFont(ofSize: 17)
-        ret.textColor = .main
+        ret.textColor = .secondary
         ret.numberOfLines = 1
         return ret
     }()

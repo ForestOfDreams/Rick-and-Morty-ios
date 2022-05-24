@@ -26,8 +26,12 @@ final class SearchSuggestsCollectionCell: UICollectionViewCell {
     }
     
     private func setup() {
+        backgroundColor = .BG
+        
         addSubview(imageView)
+        
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),

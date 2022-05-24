@@ -32,9 +32,11 @@ final class HomeViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .BG
+        
         view.addSubview(titleView)
         view.addSubview(subTitleView)
         view.addSubview(image)
+        
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -48,10 +50,14 @@ final class HomeViewController: UIViewController {
             subTitleView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             subTitleView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            image.topAnchor.constraint(equalTo: subTitleView.bottomAnchor),
+            image.topAnchor.constraint(equalTo: subTitleView.bottomAnchor, constant: 20),
             image.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            image.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            image.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.onImageTap))
+        image.addGestureRecognizer(tap)
+        image.isUserInteractionEnabled = true
     }
     
     private func updateInfo() {
@@ -95,11 +101,46 @@ final class HomeViewController: UIViewController {
         return ret
     }()
     
-    private lazy var image: UIImageView = {
+    // private?
+    public lazy var image: UIImageView = {
         let ret = UIImageView()
-        ret.image = UIImage(named: "Home")
+        let image = UIImage(named: "Home")
+        ret.image = image
         ret.contentMode = .scaleAspectFit
+        ret.widthAnchor.constraint(equalTo: ret.heightAnchor, multiplier: image!.size.width / image!.size.height).isActive = true
         return ret
     }()
+    
+    @objc func onImageTap()
+    {
+        a = HomeImageViewController()
+        a.modalPresentationStyle = .overCurrentContext
+        a.transitioningDelegate = self
+        //        navigationController?.pushViewController(destination, animated: true)
+        
+        present(a, animated: true)
+    }
+    var a: HomeImageViewController = HomeImageViewController()
 }
 
+extension HomeViewController: UIViewControllerTransitioningDelegate {
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController, source: UIViewController)
+    -> UIViewControllerAnimatedTransitioning? {
+        return Animator(
+            type: .present,
+            homeViewController: self,
+            homeImageViewController: a
+        )
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController)
+    -> UIViewControllerAnimatedTransitioning? {
+        return Animator(
+            type: .dismiss,
+            homeViewController: self,
+            homeImageViewController: a
+        )
+    }
+}

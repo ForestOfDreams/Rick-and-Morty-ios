@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 final class FavoritesViewController: UIViewController {
+    var showCharacterDetailRequested: (String) -> () = { name in }
     
     struct Model {
         let cells: [FavoriteTableCell.Model]
@@ -17,7 +18,6 @@ final class FavoritesViewController: UIViewController {
     init(model: Model) {
         self.model = model
         super.init(nibName: nil, bundle: nil)
-        title = "Favorites"
     }
     
     required init?(coder: NSCoder) {
@@ -27,9 +27,6 @@ final class FavoritesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Так ок?
-//        title = "Favorites"
-//        navigationItem.title = "Favorites"
         tableView.delegate = self
         tableView.dataSource = self
         setupUI()
@@ -53,9 +50,8 @@ final class FavoritesViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let ret = UITableView()
+        ret.backgroundColor = .BG
         ret.separatorStyle = .none
-        // Удаляет separator с первой ячейки
-//        ret.tableHeaderView = UIView()
         ret.register(FavoriteTableCell.self, forCellReuseIdentifier: FavoriteTableCell.defaultReusableIdentifier)
         return ret
     }()
@@ -87,5 +83,9 @@ extension FavoritesViewController: UITableViewDataSource {
         )
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        showCharacterDetailRequested(model.cells[indexPath.item].name)
     }
 }

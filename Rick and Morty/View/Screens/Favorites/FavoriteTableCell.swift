@@ -20,7 +20,6 @@ final class FavoriteTableCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        super.layoutSubviews()
         setupLayout()
     }
     
@@ -29,10 +28,8 @@ final class FavoriteTableCell: UITableViewCell {
     }
     
     private func setupLayout() {
-        self.separatorInset.right = 16
-        self.separatorInset.left = 16
+        self.backgroundColor = .BG
         self.selectionStyle = .none
-        // Может быть помещать в contentView?
         
         contentView.addSubview(nameLabel)
         contentView.addSubview(characterImage)
@@ -46,6 +43,8 @@ final class FavoriteTableCell: UITableViewCell {
             characterImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             characterImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             characterImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,constant: -23),
+            characterImage.widthAnchor.constraint(equalToConstant: 100),
+            characterImage.heightAnchor.constraint(equalToConstant: 100),
             
             nameLabel.leadingAnchor.constraint(equalTo: characterImage.trailingAnchor, constant: 16),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -55,14 +54,6 @@ final class FavoriteTableCell: UITableViewCell {
             rowSeparator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             rowSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
-        // Здесь был warning без задания priority, почему? :(
-        let constraint = characterImage.widthAnchor.constraint(equalToConstant: 100)
-//        constraint.priority = .defaultHigh
-        constraint.isActive = true
-        
-        let constraint2 = characterImage.heightAnchor.constraint(equalToConstant: 100)
-//        constraint2.priority = .defaultHigh
-        constraint2.isActive = true
     }
     
     func update(with model: Model) {

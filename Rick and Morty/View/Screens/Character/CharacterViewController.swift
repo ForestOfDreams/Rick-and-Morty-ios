@@ -20,7 +20,6 @@ final class CharacterViewController: UIViewController {
     init(model: Model) {
         self.model = model
         super.init(nibName: nil, bundle: nil)
-        title = "Characters"
     }
     
     @available(*, unavailable)
@@ -30,8 +29,6 @@ final class CharacterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        title = "Characters"
         
         setupUI()
         updateInfo()
