@@ -45,8 +45,6 @@ final class SearchResultTableCell: UITableViewCell {
             characterImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             characterImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             characterImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,constant: -23),
-//            characterImage.widthAnchor.constraint(equalToConstant: 120),
-//            characterImage.heightAnchor.constraint(equalToConstant: 160),
             
             nameLabel.leadingAnchor.constraint(equalTo: characterImage.trailingAnchor, constant: 24),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),

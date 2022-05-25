@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 class FavoritesTabCoordinator: Coordinator {
     
@@ -28,5 +29,6 @@ class FavoritesTabCoordinator: Coordinator {
     
     func goToCharacterDetail() {
         rootViewController.pushViewController(CharacterViewController(model: MockData().characterModel), animated: true)
+//        rootViewController.pushViewController(UIHostingController(rootView: CharacterScreen()), animated: true)
     }
 }

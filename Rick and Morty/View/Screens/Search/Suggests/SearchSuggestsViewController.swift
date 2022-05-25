@@ -30,6 +30,7 @@ final class SearchSuggestsViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.keyboardDismissMode = .onDrag
         setupUI()
     }
     

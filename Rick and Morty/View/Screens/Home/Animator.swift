@@ -10,7 +10,7 @@ import UIKit
 
 class Animator: NSObject, UIViewControllerAnimatedTransitioning {
     
-    static let duration: TimeInterval = 1.25
+    static let duration: TimeInterval = 1
     private let type: PresentationType
     private let homeViewController: HomeViewController
     private let homeImageViewController: HomeImageViewController
@@ -47,6 +47,7 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
                     self.homeImageViewController.view.frame.origin.y -= self.homeViewController.image.frame.minY
                     self.homeImageViewController.closeButton.alpha = 1
                 } else {
+                    self.homeImageViewController.scrollView.zoomScale = 1
                     self.homeImageViewController.view.frame.origin.y += self.homeViewController.image.frame.minY
                     self.homeImageViewController.closeButton.alpha = 0
                 }

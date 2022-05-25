@@ -30,12 +30,15 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+//        view.isUserInteractionEnabled = false
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+//        view.addGestureRecognizer(tap)
     }
     
     private func setupUI() {
         view.backgroundColor = .BG
         
-        view.addSubview(searchResults.view) 
+        view.addSubview(searchResults.view)
         view.addSubview(suggests.view)
         view.addSubview(searchBar)
         view.subviews.forEach {
@@ -69,6 +72,10 @@ final class SearchViewController: UIViewController {
                 }
             }
             .store(in: &subscriptions)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func updateInfo() {

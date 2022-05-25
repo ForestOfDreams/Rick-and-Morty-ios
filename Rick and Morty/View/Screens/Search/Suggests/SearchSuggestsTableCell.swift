@@ -44,12 +44,10 @@ final class SearchSuggestsTableCell: UITableViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             
-            // Можно ли настривать contraint в разных NSLayoutConstraint.activate([])?
             collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            // Как вычислять размер динамически?
             collectionView.heightAnchor.constraint(equalToConstant: 160)
         ])
     }

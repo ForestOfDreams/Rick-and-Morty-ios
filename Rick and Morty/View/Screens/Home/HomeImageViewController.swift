@@ -65,7 +65,8 @@ final class HomeImageViewController: UIViewController {
         
     }
     
-    private lazy var scrollView: UIScrollView = {
+    // Private ???
+    public lazy var scrollView: UIScrollView = {
         let ret = UIScrollView()
         ret.contentInsetAdjustmentBehavior = .never
         ret.bounces = false
@@ -116,7 +117,6 @@ extension HomeImageViewController: UIScrollViewDelegate {
     }
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         let offsetX = max((scrollView.bounds.width - scrollView.contentSize.width) * 0.5, 0)
-//        let offsetY = max((scrollView.bounds.height - scrollView.contentSize.height) * 0.5, 0)
         scrollView.contentInset = UIEdgeInsets(top: 0, left: offsetX, bottom: 0, right: 0)
     }
 }

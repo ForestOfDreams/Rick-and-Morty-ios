@@ -12,6 +12,7 @@ class SearchBar: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        textField.delegate = self
         setup()
     }
     
@@ -61,10 +62,32 @@ class SearchBar: UIView {
         let ret = UITextField()
         ret.attributedPlaceholder = NSAttributedString(
             string: "Search for character",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.main]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.main,
+                         NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .regular)
+                        ]
         )
         ret.tintColor = .main
         
         return ret
     }()
+}
+
+extension SearchBar: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Search for character",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondary,
+                         NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+                        ]
+        )
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Search for character",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.main,
+                         NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .regular)
+                        ]
+        )
+    }
 }
