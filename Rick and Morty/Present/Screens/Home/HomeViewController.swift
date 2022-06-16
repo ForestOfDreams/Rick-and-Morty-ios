@@ -7,8 +7,11 @@
 
 import Foundation
 import UIKit
+import Combine
 
 final class HomeViewController: UIViewController {
+    
+    var viewModel : HomeViewModel!
     
     struct Model {
     }
@@ -101,8 +104,8 @@ final class HomeViewController: UIViewController {
         return ret
     }()
     
-    // private?
-    public lazy var image: UIImageView = {
+    
+    private lazy var image: UIImageView = {
         let ret = UIImageView()
         let image = UIImage(named: "Home")
         ret.image = image
@@ -111,36 +114,62 @@ final class HomeViewController: UIViewController {
         return ret
     }()
     
+    private var cancellableSet: Set<AnyCancellable> = []
+    
     @objc func onImageTap()
     {
-        a = HomeImageViewController()
-        a.modalPresentationStyle = .overCurrentContext
-        a.transitioningDelegate = self
-        //        navigationController?.pushViewController(destination, animated: true)
-        
-        present(a, animated: true)
+        let service = CharacterAPIService()
+        service.getAllCharacters().sink(receiveCompletion: {
+//            let b = $0 as! ServerError
+            print($0)
+        }) {
+            print($0)
+        }.store(in: &cancellableSet)
+        viewModel.goToImageView()
     }
-    var a: HomeImageViewController = HomeImageViewController()
+    
+    public func getTopImageY() -> CGFloat {
+        return image.frame.minY
+    }
 }
 
 extension HomeViewController: UIViewControllerTransitioningDelegate {
+//    func animationController(
+//        forPresented presented: UIViewController,
+//        presenting: UIViewController,
+//        source: UIViewController
+//    )
+//    -> UIViewControllerAnimatedTransitioning? {
+//        return Animator(
+//            type: .present,
+//            homeViewController: self,
+//            homeImageViewController: a
+//        )
+//    }
+//
+//    func animationController(forDismissed dismissed: UIViewController)
+//    -> UIViewControllerAnimatedTransitioning? {
+//        return Animator(
+//            type: .dismiss,
+//            homeViewController: self,
+//            homeImageViewController: a
+//        )
+//    }
     func animationController(
         forPresented presented: UIViewController,
-        presenting: UIViewController, source: UIViewController)
+        presenting: UIViewController,
+        source: UIViewController
+    )
     -> UIViewControllerAnimatedTransitioning? {
         return Animator(
-            type: .present,
-            homeViewController: self,
-            homeImageViewController: a
+            type: .present
         )
     }
     
     func animationController(forDismissed dismissed: UIViewController)
     -> UIViewControllerAnimatedTransitioning? {
         return Animator(
-            type: .dismiss,
-            homeViewController: self,
-            homeImageViewController: a
+            type: .dismiss
         )
     }
 }

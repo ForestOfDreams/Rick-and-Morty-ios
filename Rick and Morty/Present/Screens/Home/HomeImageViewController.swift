@@ -61,12 +61,11 @@ final class HomeImageViewController: UIViewController {
             closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 63),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
-        closeButton.addTarget(self, action: #selector(onImageTap), for: .touchUpInside)
+        closeButton.addTarget(self, action: #selector(onCloseBtnTap), for: .touchUpInside)
         
     }
     
-    // Private ???
-    public lazy var scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let ret = UIScrollView()
         ret.contentInsetAdjustmentBehavior = .never
         ret.bounces = false
@@ -89,8 +88,8 @@ final class HomeImageViewController: UIViewController {
         return ret
     }()
     
-    // Private?
-    public lazy var closeButton: UIButton = {
+
+    private lazy var closeButton: UIButton = {
         let ret = FavoriteButton()
         let normalImage = UIImage(systemName: "multiply")
         ret.setImage(normalImage, for: .normal)
@@ -105,7 +104,19 @@ final class HomeImageViewController: UIViewController {
         return ret
     }()
     
-    @objc func onImageTap()
+    public func makeCloseBtnTransperent() {
+        closeButton.alpha = 0
+    }
+    
+    public func removeCloseBtnTransperent() {
+        closeButton.alpha = 1
+    }
+    
+    public func makeDefaultZoomScale() {
+        scrollView.zoomScale = 1
+    }
+    
+    @objc func onCloseBtnTap()
     {
         self.dismiss(animated: true, completion: nil)
     }

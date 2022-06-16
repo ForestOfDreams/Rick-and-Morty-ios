@@ -14,11 +14,24 @@ class HomeTabCoordinator: Coordinator {
     
     lazy var homeViewController: HomeViewController = {
         let vc = HomeViewController(model: HomeViewController.Model())
+        let vm = HomeViewModel()
+        vm.coordinator = self
+        vc.viewModel = vm
         return vc
     }()
     
     func start() {
         rootViewController.setViewControllers([homeViewController], animated: false)
         rootViewController.setNavigationBarHidden(true, animated: false)
+    }
+    
+    func goToImageView() {
+        var a = HomeImageViewController()
+        a.modalPresentationStyle = .overCurrentContext
+        
+        a.transitioningDelegate = homeViewController
+        
+        homeViewController.present(a, animated: true)
+//        homeViewController.navigationController?.pushViewController(a, animated: true)
     }
 }
