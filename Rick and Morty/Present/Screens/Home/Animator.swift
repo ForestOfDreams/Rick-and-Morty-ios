@@ -12,17 +12,11 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
     
     static let duration: TimeInterval = 1
     private let type: PresentationType
-    //    private let homeViewController: HomeViewController
-    //    private let homeImageViewController: HomeImageViewController
     
     init?(
         type: PresentationType
-        //        homeViewController: HomeViewController,
-        //        homeImageViewController: HomeImageViewController
     ) {
         self.type = type
-        //        self.homeViewController = homeViewController
-        //        self.homeImageViewController = homeImageViewController
     }
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -39,12 +33,11 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
         
         if type.isPresenting {
             guard let homeImageViewController = toVC as? HomeImageViewController,
-                  let homeViewController = fromVC.children[0] as? HomeViewController
+                  let homeViewController = fromVC as? HomeViewController
             else {
                 return
             }
             
-            let containerView = transitionContext.containerView
             containerView.addSubview(homeImageViewController.view)
             homeImageViewController.view.frame.origin.y += homeViewController.getTopImageY()
             homeImageViewController.makeCloseBtnTransperent()
@@ -61,7 +54,7 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
             )
         } else {
             guard let homeImageViewController = fromVC as? HomeImageViewController,
-                  let homeViewController = toVC.children[0] as? HomeViewController
+                  let homeViewController = toVC as? HomeViewController
             else {
                 return
             }
@@ -72,13 +65,9 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
                     homeImageViewController.makeDefaultZoomScale()
                     homeImageViewController.view.frame.origin.y += homeViewController.getTopImageY()
                     homeImageViewController.makeCloseBtnTransperent()
-                    toVC.view.layer.mask = nil
-                    
                 },
                 completion: {
                     homeImageViewController.view.removeFromSuperview()
-                    homeImageViewController.view.frame.origin.y -= homeViewController.getTopImageY()
-                    homeImageViewController.removeCloseBtnTransperent()
                     transitionContext.completeTransition($0)
                 }
             )

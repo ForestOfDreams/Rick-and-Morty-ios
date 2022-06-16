@@ -26,12 +26,10 @@ class HomeTabCoordinator: Coordinator {
     }
     
     func goToImageView() {
-        var a = HomeImageViewController()
-        a.modalPresentationStyle = .overCurrentContext
-        
-        a.transitioningDelegate = homeViewController
-        
-        homeViewController.present(a, animated: true)
-//        homeViewController.navigationController?.pushViewController(a, animated: true)
+        let homeImageViewViewController = HomeImageViewController()
+        homeImageViewViewController.modalPresentationStyle = .overCurrentContext
+        homeViewController.definesPresentationContext = true
+        homeImageViewViewController.transitioningDelegate = homeViewController
+        homeViewController.present(homeImageViewViewController, animated: true)
     }
 }

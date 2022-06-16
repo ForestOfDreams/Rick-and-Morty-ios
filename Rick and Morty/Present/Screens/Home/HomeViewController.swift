@@ -134,27 +134,6 @@ final class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: UIViewControllerTransitioningDelegate {
-//    func animationController(
-//        forPresented presented: UIViewController,
-//        presenting: UIViewController,
-//        source: UIViewController
-//    )
-//    -> UIViewControllerAnimatedTransitioning? {
-//        return Animator(
-//            type: .present,
-//            homeViewController: self,
-//            homeImageViewController: a
-//        )
-//    }
-//
-//    func animationController(forDismissed dismissed: UIViewController)
-//    -> UIViewControllerAnimatedTransitioning? {
-//        return Animator(
-//            type: .dismiss,
-//            homeViewController: self,
-//            homeImageViewController: a
-//        )
-//    }
     func animationController(
         forPresented presented: UIViewController,
         presenting: UIViewController,
