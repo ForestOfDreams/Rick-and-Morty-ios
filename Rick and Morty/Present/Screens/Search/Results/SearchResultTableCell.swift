@@ -20,7 +20,6 @@ final class SearchResultTableCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        super.layoutSubviews()
         setupLayout()
     }
     
@@ -58,13 +57,11 @@ final class SearchResultTableCell: UITableViewCell {
             rowSeparator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             rowSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
-        // Здесь был warning без задания priority, почему? :(
+
         let constraint = characterImage.widthAnchor.constraint(equalToConstant: 120)
-//        constraint.priority = .defaultHigh
         constraint.isActive = true
         
         let constraint2 = characterImage.heightAnchor.constraint(equalToConstant: 160)
-//        constraint2.priority = .defaultHigh
         constraint2.isActive = true
     }
     

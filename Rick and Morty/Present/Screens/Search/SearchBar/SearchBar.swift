@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class SearchBar: UIView {
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         textField.delegate = self

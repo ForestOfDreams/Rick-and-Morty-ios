@@ -7,18 +7,15 @@
 
 import Foundation
 import UIKit
+import Combine
 
 final class SearchSuggestsViewController: UIViewController {
     
-    var showCharacterDetailRequested: (String) -> ()
+    var viewModel : SearchViewModel!
     
-    struct Model {
-        let cells: [SearchSuggestsTableCell.Model]
-    }
+    var subscriptions = Set<AnyCancellable>()
     
-    init(model: Model, showCharacterDetailRequested: @escaping (String) -> ()) {
-        self.model = model
-        self.showCharacterDetailRequested = showCharacterDetailRequested
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,6 +29,11 @@ final class SearchSuggestsViewController: UIViewController {
         tableView.dataSource = self
         tableView.keyboardDismissMode = .onDrag
         setupUI()
+        
+        viewModel.recents.sink(receiveValue: {[weak self]_ in
+            self?.tableView.reloadData()
+        })
+        .store(in: &subscriptions)
     }
     
     private func setupUI() {
@@ -46,13 +48,14 @@ final class SearchSuggestsViewController: UIViewController {
         
     }
     
-    private let model: Model
-    
     private lazy var tableView: UITableView = {
         let ret = UITableView()
         ret.backgroundColor = .BG
         ret.separatorStyle = .none
-        ret.register(SearchSuggestsTableCell.self, forCellReuseIdentifier: SearchSuggestsTableCell.defaultReusableIdentifier)
+        ret.register(
+            SearchSuggestsTableCell.self,
+            forCellReuseIdentifier: SearchSuggestsTableCell.defaultReusableIdentifier
+        )
         return ret
     }()
 }
@@ -66,7 +69,7 @@ extension SearchSuggestsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        model.cells.count
+        1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,13 +80,21 @@ extension SearchSuggestsViewController: UITableViewDataSource {
             assertionFailure()
             return UITableViewCell()
         }
-        cell.showCharacterDetailRequested = showCharacterDetailRequested
+        
+        cell.viewModel = viewModel
+        
         cell.update(
             with: SearchSuggestsTableCell.Model(
-                title: model.cells[indexPath.item].title,
-                collectionCellContent: model.cells[indexPath.item].collectionCellContent
+                title: "Recents"
             )
         )
+        
+        viewModel.recents.sink(receiveValue: {[weak self]_ in
+            cell.collectionView.reloadData()
+        })
+        
+        .store(in: &subscriptions)
+        
         return cell
     }
 }

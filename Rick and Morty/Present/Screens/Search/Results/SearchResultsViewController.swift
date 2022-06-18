@@ -7,19 +7,15 @@
 
 import Foundation
 import UIKit
+import Combine
 
 final class SearchResultsViewController: UIViewController {
     
-    // ???
-    var showCharacterDetailRequested: (String) -> ()
+    var viewModel : SearchViewModel!
     
-    struct Model {
-        let cells: [SearchResultTableCell.Model]
-    }
+    var subscriptions = Set<AnyCancellable>()
     
-    init(model: Model, showCharacterDetailRequested: @escaping (String) -> ()) {
-        self.model = model
-        self.showCharacterDetailRequested = showCharacterDetailRequested
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,10 +28,15 @@ final class SearchResultsViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         setupUI()
+        
+        viewModel.searchResults.sink(receiveValue: {[weak self]_ in
+            self?.tableView.reloadData()
+        })
+        .store(in: &subscriptions)
     }
     
     private func setupUI() {
-        view.backgroundColor = .BG
+        view.backgroundColor = .red
         
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -46,11 +47,8 @@ final class SearchResultsViewController: UIViewController {
         
     }
     
-    private let model: Model
-    
     private lazy var tableView: UITableView = {
         let ret = UITableView()
-        // Можно ли задать это для всего controller?
         ret.backgroundColor = .BG
         ret.separatorStyle = .none
         ret.register(SearchResultTableCell.self, forCellReuseIdentifier: SearchResultTableCell.defaultReusableIdentifier)
@@ -67,7 +65,7 @@ extension SearchResultsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        model.cells.count
+        return viewModel.searchResults.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -81,15 +79,21 @@ extension SearchResultsViewController: UITableViewDataSource {
         
         cell.update(
             with: SearchResultTableCell.Model(
-                name: model.cells[indexPath.item].name,
-                type: model.cells[indexPath.item].type,
-                imageURL: model.cells[indexPath.item].imageURL
+                name: viewModel.searchResults.value[indexPath.item].name,
+                type: viewModel.searchResults.value[indexPath.item].species,
+                imageURL: URL(string: viewModel.searchResults.value[indexPath.item].image)!
             )
         )
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showCharacterDetailRequested(model.cells[indexPath.item].name)
+        UserLogger.shared.log(
+            test: "Character with id \(viewModel.searchResults.value[indexPath.item].id) was open from search screen",
+            level: .info
+        )
+        
+        viewModel.goToCharacterDetailScreen(character: viewModel.searchResults.value[indexPath.item])
     }
 }

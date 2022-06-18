@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-// : UIView или UIStackView
 final class InfoCell: UIView {
     
     struct Model {
@@ -40,10 +39,6 @@ final class InfoCell: UIView {
         
         stack.pin(to: self)
         NSLayoutConstraint.activate([
-//            stack.topAnchor.constraint(equalTo: topAnchor),
-//            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
-//            stack.leftAnchor.constraint(equalTo: leftAnchor),
-//            stack.rightAnchor.constraint(equalTo: rightAnchor),
             separator.topAnchor.constraint(equalTo: stack.bottomAnchor, constant: 8),
             separator.widthAnchor.constraint(equalTo: widthAnchor)
         ])
@@ -59,7 +54,6 @@ final class InfoCell: UIView {
     
         ret.addArrangedSubview(infoKeyLabel)
         ret.addArrangedSubview(infoValueLabel)
-//        ret.addArrangedSubview(separator)
         return ret
     }()
     

@@ -7,17 +7,17 @@
 
 import Foundation
 import UIKit
+import Combine
 
 final class SearchSuggestsTableCell: UITableViewCell {
-    // ???
-    var showCharacterDetailRequested: (String) -> () = {_ in }
+    
+    var viewModel : SearchViewModel!
+    
+    var subscriptions = Set<AnyCancellable>()
     
     struct Model {
         let title: String
-        let collectionCellContent: [SearchSuggestsCollectionCell.Model]
     }
-    
-    var collectionCellContent: [SearchSuggestsCollectionCell.Model] = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -54,7 +54,6 @@ final class SearchSuggestsTableCell: UITableViewCell {
     
     func update(with model: Model) {
         titleLabel.text = model.title
-        collectionCellContent = model.collectionCellContent
     }
     
     private lazy var titleLabel: UILabel = {
@@ -65,7 +64,7 @@ final class SearchSuggestsTableCell: UITableViewCell {
         return ret
     }()
     
-    private lazy var collectionView: UICollectionView = {
+    public lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 20
@@ -78,6 +77,7 @@ final class SearchSuggestsTableCell: UITableViewCell {
             forCellWithReuseIdentifier: SearchSuggestsCollectionCell.defaultReusableIdentifier
         )
         ret.sendSubviewToBack(contentView)
+        
         return ret
     }()
 }
@@ -90,7 +90,7 @@ extension SearchSuggestsTableCell: UICollectionViewDelegateFlowLayout {
 
 extension SearchSuggestsTableCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collectionCellContent.count
+        return viewModel.recents.value.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -101,12 +101,16 @@ extension SearchSuggestsTableCell: UICollectionViewDataSource {
             assertionFailure()
             return UICollectionViewCell()
         }
-
-        cell.update(with: collectionCellContent[indexPath.item])
+        
+        cell.update(
+            with: SearchSuggestsCollectionCell.Model(
+                imageURL: URL(string: viewModel.recents.value[indexPath.item].image)!
+            )
+        )
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        showCharacterDetailRequested("")
+        viewModel.goToCharacterDetailScreen(character: viewModel.recents.value[indexPath.item])
     }
 }
 

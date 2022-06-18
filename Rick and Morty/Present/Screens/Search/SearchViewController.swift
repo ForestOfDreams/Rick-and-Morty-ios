@@ -10,16 +10,12 @@ import UIKit
 import Combine
 
 final class SearchViewController: UIViewController {
+    
+    var viewModel : SearchViewModel!
+    
     var subscriptions = Set<AnyCancellable>()
-    var showCharacterDetailRequested: (String) -> () = { name in }
     
-    struct Model {
-        let suggests: SearchSuggestsViewController.Model
-        let searchResults: SearchResultsViewController.Model
-    }
-    
-    init(model: Model) {
-        self.model = model
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -30,48 +26,91 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-//        view.isUserInteractionEnabled = false
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-//        view.addGestureRecognizer(tap)
     }
     
-    private func setupUI() {
-        view.backgroundColor = .BG
-        
-        view.addSubview(searchResults.view)
-        view.addSubview(suggests.view)
-        view.addSubview(searchBar)
-        view.subviews.forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
+    private func setupSearchUI() {
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            
             searchResults.view.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             searchResults.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             searchResults.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            searchResults.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
+            searchResults.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+    
+    private func setupSuggestUI() {
+        NSLayoutConstraint.activate([
             suggests.view.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             suggests.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             suggests.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             suggests.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    private func setupUI() {
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+
+            //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
+            //tap.cancelsTouchesInView = false
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        view.backgroundColor = .BG
+        
+        view.addSubview(searchBar)
+        
+        searchBar.textField.delegate = self
+        
+        view.subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15)
+        ])
+        searchBar.textField.createBinding(with: viewModel.searchText, storeIn: &subscriptions)
         
         searchBar.textField.textPublisher()
             .sink { [weak self] in
+                guard let self = self else { return }
                 if $0.isEmpty {
-                    self?.searchResults.view.alpha = 0
-                    self?.suggests.view.alpha = 1
+                    self.showSuggestView()
                 } else {
-                    self?.searchResults.view.alpha = 1
-                    self?.suggests.view.alpha = 0
+                    self.showSearchView()
                 }
             }
             .store(in: &subscriptions)
+        
+        showSuggestView()
+    }
+    
+    func showSuggestView() {
+        searchResults.willMove(toParent: nil)
+        searchResults.view.removeFromSuperview()
+        searchResults.removeFromParent()
+        
+        addChild(suggests)
+        view.addSubview(suggests.view)
+        suggests.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        setupSuggestUI()
+        
+        suggests.didMove(toParent: self)
+    }
+    
+    func showSearchView() {
+        suggests.willMove(toParent: nil)
+        suggests.view.removeFromSuperview()
+        suggests.removeFromParent()
+        
+        addChild(self.searchResults)
+        view.addSubview(self.searchResults.view)
+        searchResults.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        setupSearchUI()
+
+        searchResults.didMove(toParent: self)
     }
     
     @objc func dismissKeyboard() {
@@ -82,17 +121,29 @@ final class SearchViewController: UIViewController {
         
     }
     
-    private let model: Model
-    
     private lazy var searchBar: SearchBar = {
         return SearchBar()
     }()
     
     private lazy var suggests: SearchSuggestsViewController = {
-        return SearchSuggestsViewController(model: model.suggests, showCharacterDetailRequested: showCharacterDetailRequested)
+        let vc = SearchSuggestsViewController()
+        
+        vc.viewModel = viewModel
+        
+        return vc
     }()
     
     private lazy var searchResults: SearchResultsViewController = {
-        return SearchResultsViewController(model: model.searchResults, showCharacterDetailRequested: showCharacterDetailRequested)
+        let vc = SearchResultsViewController()
+        vc.viewModel = viewModel
+        
+        return vc
     }()
+}
+
+extension SearchViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
 }

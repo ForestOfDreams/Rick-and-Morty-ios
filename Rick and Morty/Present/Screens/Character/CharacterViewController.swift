@@ -8,17 +8,15 @@
 import Foundation
 import Kingfisher
 import UIKit
+import Combine
 
 final class CharacterViewController: UIViewController {
     
-    struct Model {
-        let statusModel: InfoCell.Model
-        let name: String
-        let imageURL: URL
-    }
+    var viewModel : CharacterViewModel!
     
-    init(model: Model) {
-        self.model = model
+    var subscriptions = Set<AnyCancellable>()
+    
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,6 +30,11 @@ final class CharacterViewController: UIViewController {
         
         setupUI()
         updateInfo()
+        
+        viewModel.character.sink { [weak self] _ in
+            self?.updateInfo()
+        }
+        .store(in: &subscriptions)
     }
     
     private func setupUI() {
@@ -61,24 +64,43 @@ final class CharacterViewController: UIViewController {
             titleView.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             titleView.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            // Зачем здесь safeAreaLayoutGuide?
             stack.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 20),
             stack.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             stack.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             stack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
+        
+        navigationController?.navigationBar.tintColor = .main
     }
     
     private func updateInfo() {
-        icon.kf.setImage(with: model.imageURL)
-//        icon.image = try? await ImageLoaderImpl().getImage(from: model.imageURL)
-        titleView.update(with: CharacterTitleView.Model(name: model.name))
-        statusCell.update(with: model.statusModel)
-        speciesCell.update(with: model.statusModel)
-        genderCell.update(with: model.statusModel)
+        icon.kf.setImage(with: URL(string: viewModel.character.value.image)!)
+        titleView.update(
+            with: CharacterTitleView.Model(
+                name: viewModel.character.value.name,
+                isFavorite: viewModel.character.value.isFavorite
+            )
+        )
+        
+        statusCell.update(
+            with: InfoCell.Model(
+                key: "Status",
+                value: viewModel.character.value.status.rawValue
+            )
+        )
+        speciesCell.update(
+            with: InfoCell.Model(
+                key: "Species",
+                value: viewModel.character.value.species
+            )
+        )
+        genderCell.update(
+            with: InfoCell.Model(
+                key: "Gender",
+                value: viewModel.character.value.gender.rawValue
+            )
+        )
     }
-    
-    private let model: Model
     
     private lazy var icon: UIImageView = {
         let ret = BaseImage(frame: .zero)
@@ -98,7 +120,7 @@ final class CharacterViewController: UIViewController {
         return ret
     }()
     
-    private lazy var titleView = CharacterTitleView()
+    private lazy var titleView = CharacterTitleView(onLikeButtonTap: viewModel.onLikeButtonTap)
     private lazy var statusCell = InfoCell()
     private lazy var speciesCell = InfoCell()
     private lazy var genderCell = InfoCell()

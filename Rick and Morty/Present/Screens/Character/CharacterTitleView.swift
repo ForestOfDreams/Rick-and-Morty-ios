@@ -12,10 +12,14 @@ final class CharacterTitleView: UIView {
     
     struct Model {
         let name: String
+        let isFavorite: Bool
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    var onLikeButtonTap: () -> ()
+    
+    init(onLikeButtonTap: @escaping () -> ()) {
+        self.onLikeButtonTap = onLikeButtonTap
+        super.init(frame: .zero)
         setup()
     }
     
@@ -26,6 +30,7 @@ final class CharacterTitleView: UIView {
     
     func update(with model: Model) {
         nameLabel.text = model.name
+        favoriteButton.isSelected = model.isFavorite
     }
     
     private func setup() {
@@ -38,6 +43,7 @@ final class CharacterTitleView: UIView {
         
         NSLayoutConstraint.activate([
             nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: favoriteButton.leadingAnchor),
             nameLabel.topAnchor.constraint(equalTo: topAnchor),
             nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             favoriteButton.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -58,15 +64,20 @@ final class CharacterTitleView: UIView {
         let normalImage = UIImage(systemName: "heart")
         ret.setImage(normalImage, for: .normal)
         let highlightedImage = UIImage(systemName: "heart.fill")
-        ret.setImage(highlightedImage, for: .highlighted)
+        ret.setImage(highlightedImage, for: .selected)
         ret.backgroundColor = .greyBG
         ret.tintColor = .main
         ret.widthAnchor.constraint(equalToConstant: 48).isActive = true
         ret.heightAnchor.constraint(equalToConstant: 48).isActive = true
         ret.layer.cornerRadius = 24
         
+        ret.addTarget(self, action: #selector(self.buttonClicked), for: .touchUpInside)
         return ret
     }()
+    
+    @objc func buttonClicked() {
+        onLikeButtonTap()
+    }
 }
 
 final class FavoriteButton: UIButton {
@@ -78,9 +89,9 @@ final class FavoriteButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override var isHighlighted: Bool {
+    override var isSelected: Bool {
         get {
-            return super.isHighlighted
+            return super.isSelected
         }
         set {
             if newValue {
@@ -91,7 +102,7 @@ final class FavoriteButton: UIButton {
                 backgroundColor = .greyBG
                 tintColor = .main
             }
-            super.isHighlighted = newValue
+            super.isSelected = newValue
         }
     }
 }

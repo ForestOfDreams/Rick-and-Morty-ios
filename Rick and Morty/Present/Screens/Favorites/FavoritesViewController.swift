@@ -7,16 +7,15 @@
 
 import Foundation
 import UIKit
+import Combine
 
 final class FavoritesViewController: UIViewController {
-    var showCharacterDetailRequested: (String) -> () = { name in }
     
-    struct Model {
-        let cells: [FavoriteTableCell.Model]
-    }
+    var viewModel : FavoritesViewModel!
     
-    init(model: Model) {
-        self.model = model
+    var subscriptions = Set<AnyCancellable>()
+    
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -30,29 +29,56 @@ final class FavoritesViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         setupUI()
+        
+        viewModel.favoriteCharacters.sink(receiveValue: {[weak self] in
+            if $0.isEmpty {
+                self?.noFavoritesLabel.alpha = 1
+            } else {
+                self?.noFavoritesLabel.alpha = 0
+            }
+            self?.tableView.reloadData()
+        })
+        .store(in: &subscriptions)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.reloadFavorites()
     }
     
     private func setupUI() {
         view.backgroundColor = .BG
-        // Лучше не менять navigationBar из viewController?
-//        navigationController?.navigationBar.prefersLargeTitles = true
-//        navigationItem.largeTitleDisplayMode = .never
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(noFavoritesLabel)
+        
+        view.subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         tableView.pin(to: view)
+        NSLayoutConstraint.activate([
+            noFavoritesLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noFavoritesLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
     
     private func updateInfo() {
         
     }
     
-    private let model: Model
-    
     private lazy var tableView: UITableView = {
         let ret = UITableView()
         ret.backgroundColor = .BG
         ret.separatorStyle = .none
         ret.register(FavoriteTableCell.self, forCellReuseIdentifier: FavoriteTableCell.defaultReusableIdentifier)
+        return ret
+    }()
+    
+    private lazy var noFavoritesLabel: UILabel = {
+        let ret = UILabel()
+        ret.font = .boldSystemFont(ofSize: 22)
+        ret.textColor = .secondary
+        ret.numberOfLines = 1
+        ret.text = "No favorites yet"
         return ret
     }()
 }
@@ -66,7 +92,7 @@ extension FavoritesViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        model.cells.count
+        viewModel.favoriteCharacters.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,13 +105,22 @@ extension FavoritesViewController: UITableViewDataSource {
         }
         
         cell.update(
-            with: model.cells[indexPath.item]
+            with: FavoriteTableCell.Model(
+                name: viewModel.favoriteCharacters.value[indexPath.item].name,
+                imageURL: URL(string: viewModel.favoriteCharacters.value[indexPath.item].image)!
+            )
         )
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showCharacterDetailRequested(model.cells[indexPath.item].name)
+        UserLogger.shared.log(
+            test: "Character with id \(viewModel.favoriteCharacters.value[indexPath.item].id) was open from favorite screen",
+            level: .info
+        )
+        
+        viewModel.goToCharacterDetailScreen(
+            character: viewModel.favoriteCharacters.value[indexPath.item]
+        )
     }
 }

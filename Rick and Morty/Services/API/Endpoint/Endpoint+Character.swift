@@ -9,7 +9,16 @@ import Foundation
 
 extension Endpoint {
     
-    static var getAllCharacters: Self {
+    static var getCharacters: Self {
         return Endpoint(path: "/api/character")
+    }
+    
+    static func searchCharacters(name: String) -> Self {
+        return Endpoint(
+            path: "/api/character",
+            queryItems: [
+                URLQueryItem(name: "name", value: name)
+            ]
+        )
     }
 }
