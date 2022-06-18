@@ -69,7 +69,7 @@ final class CharacterViewController: UIViewController {
             stack.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             stack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
-        
+        navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.tintColor = .main
     }
     
