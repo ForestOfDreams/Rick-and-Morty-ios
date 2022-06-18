@@ -50,15 +50,11 @@ final class SearchViewController: UIViewController {
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
 
-            //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
-            //tap.cancelsTouchesInView = false
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         view.backgroundColor = .BG
         
         view.addSubview(searchBar)
-        
-        searchBar.textField.delegate = self
         
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -139,11 +135,4 @@ final class SearchViewController: UIViewController {
         
         return vc
     }()
-}
-
-extension SearchViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
-    }
 }
