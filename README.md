@@ -5,6 +5,8 @@
   <img alt="Main" src="https://github.com/ForestOfDreams/Rick-and-Morty-ios/blob/main/Screenshots/Main.png?raw=true" width="250">
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="Image" src="https://github.com/ForestOfDreams/Rick-and-Morty-ios/blob/main/Screenshots/Image.png?raw=true" width="250">
+  &nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="Animation" src="https://github.com/ForestOfDreams/Rick-and-Morty-ios/blob/main/Screenshots/Animation.gif?raw=true" width="250">
 </p>
 
 ### Favorites tab
